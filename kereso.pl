@@ -23,8 +23,8 @@ $pages[$actline[0]]=$actline[1];
 my $linknumber = $file_handle->getline();
 #szomszédsági mátrix feltöltése nullával
 my @szomszedok;
-for (my $n=1; $n<=500; $n++){
-	for (my $m=1; $m<500; $m++)	{$szomszedok[$n][$m] = 0;}
+for (my $n=1; $n<=$pagenumber; $n++){
+	for (my $m=1; $m<$pagenumber; $m++)	{$szomszedok[$n][$m] = 0;}
 }
 
 #szomszédsági mátrix kitöltése
@@ -32,8 +32,41 @@ for (my $j=1;$j<=$linknumber; $j++) {
 my $line = $file_handle->getline();
 my @actline = split(/ /,$line);
 $szomszedok[$actline[0]][$actline[1]] = 1;
+
 }
 
 #teszt
-print $szomszedok[2][117];
-print $szomszedok[2][78];
+#print $szomszedok[2][117];
+#print $szomszedok[2][78];
+
+
+#pagerank
+
+my @pagerank;
+#pagerank kezdeti 1/n
+for (my $i=1;$i<=$pagenumber;$i++){$pagerank[$i]=1/$pagenumber;}
+print "$pagerank[1]\n";
+for (my $i = 1;$i<=$pagenumber;$i++){ 
+my @backlink;
+	
+		for (my $j=1;$j<=$pagenumber;$j++){
+			
+				if ($szomszedok[$j][$i]) {push(@backlink,$j);}
+				}
+
+my $szumma = 0;
+		foreach my $bl (@backlink){
+			my $kifok=0;
+			
+				for (my $n=1;$n<$pagenumber;$n++) {
+					if ($szomszedok[$bl][$n] == 1) {$kifok++;}
+				}
+			
+			
+			$szumma = $szumma + ($pagerank[$bl]/$kifok);
+		}
+		
+$pagerank[$i]=0.88*$szumma+(1-0.88)*($pagenumber);
+}
+
+print $pagerank[1];
